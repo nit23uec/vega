@@ -253,7 +253,7 @@ async function createForm(formPath) {
   });
   form.append(...fields.map(({ el }) => el));
   // eslint-disable-next-line prefer-destructuring
-  form.dataset.action = pathname.split('.json')[0];
+  form.dataset.action = formPath.split('.json')[0];
   form.addEventListener('submit', (e) => {
     e.preventDefault();
     e.submitter.setAttribute('disabled', '');
