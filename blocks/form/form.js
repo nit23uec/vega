@@ -96,7 +96,11 @@ function createFieldWrapper(fd, tagName = 'div') {
 }
 
 function generateItemId(name) {
-  return `urn:fnkconnection:/${window.formPath}:default:Name:${name}`;
+  if (name) {
+    return `urn:fnkconnection:${window.formPath}:default:Name:${name}`;
+  } else {
+    return `urn:fnkconnection:${window.formPath}:default`;
+  }
 }
 
 function createButton(fd) {
@@ -228,10 +232,8 @@ async function fetchForm(pathname) {
   return jsonData;
 }
 
-async function createForm(formURL) {
-  const { pathname } = new URL(formURL);
-  window.formPath = pathname;
-  const data = await fetchForm(pathname);
+async function createForm(formPath) {
+  const data = await fetchForm(formPath);
   const form = document.createElement('form');
   const fields = data
     .map((fd) => ({ fd, el: renderField(fd) }));
@@ -261,8 +263,12 @@ async function createForm(formURL) {
 }
 
 export default async function decorate(block) {
+  block.setAttribute('itemtype', 'urn:fnk:type/form');
   const form = block.querySelector('a[href$=".json"]');
   if (form) {
-    form.replaceWith(await createForm(form.href));
+    const { pathname } = new URL(form.href);
+    window.formPath = pathname;
+    block.setAttribute('itemid', generateItemId());
+    form.replaceWith(await createForm(formPath));
   }
 }
