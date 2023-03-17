@@ -65,8 +65,8 @@ function createLabel(fd) {
   label.setAttribute('for', fd.Id);
   label.className = 'field-label';
   label.textContent = fd.Label || '';
-  label.itemprop =  'Label';
-  label.itemtype = 'text';
+  label.setAttribute('itemprop', 'Label');
+  label.setAttribute('itemtype', 'text');
   if (fd.Tooltip) {
     label.title = fd.Tooltip;
   }
@@ -84,8 +84,9 @@ function createHelpText(fd) {
 
 function createFieldWrapper(fd, tagName = 'div') {
   const fieldWrapper = document.createElement(tagName);
-  fieldWrapper.itemtype = 'urn:fnk:type/component';
-  fieldWrapper.itemid = generateItemId(fd.Name);
+  fieldWrapper.setAttribute('itemtype', 'urn:fnk:type/component');
+  fieldWrapper.setAttribute('itemid', generateItemId(fd.Name));
+  fieldWrapper.setAttribute('itemscope', '');
   const nameStyle = fd.Name ? ` form-${fd.Name}` : '';
   const fieldId = `form-${fd.Type}-wrapper${nameStyle}`;
   fieldWrapper.className = fieldId;
@@ -95,7 +96,7 @@ function createFieldWrapper(fd, tagName = 'div') {
 }
 
 function generateItemId(name) {
-  return "urn:fnkconnection:/afb.json:default:Name:" + name;
+  return `urn:fnkconnection:/${window.formPath}:default:Name:${name}`;
 }
 
 function createButton(fd) {
@@ -229,6 +230,7 @@ async function fetchForm(pathname) {
 
 async function createForm(formURL) {
   const { pathname } = new URL(formURL);
+  window.formPath = pathname;
   const data = await fetchForm(pathname);
   const form = document.createElement('form');
   const fields = data
