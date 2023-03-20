@@ -86,6 +86,8 @@ function createLabel(fd, tagName = 'label') {
   }
   label.className = 'field-label';
   label.innerHTML = sanitizeHTML(fd.Label) || '';
+  label.setAttribute('itemprop', 'Label');
+  label.setAttribute('itemtype', 'text');
   if (fd.Tooltip) {
     label.title = fd.Tooltip;
   }
@@ -107,6 +109,9 @@ export function createHelpText(fd) {
 
 function createFieldWrapper(fd, tagName = 'div') {
   const fieldWrapper = document.createElement(tagName);
+  fieldWrapper.setAttribute('itemtype', 'urn:fnk:type/component');
+  fieldWrapper.setAttribute('itemid', generateItemId(fd.Name));
+  fieldWrapper.setAttribute('itemscope', '');
   const nameStyle = fd.Name ? ` form-${fd.Name}` : '';
   const fieldId = `form-${fd.Type}-wrapper${nameStyle}`;
   fieldWrapper.className = fieldId;
@@ -373,12 +378,24 @@ async function createForm(formURL, config) {
   return form;
 }
 
+function generateItemId(name) {
+  if (name) {
+    return `urn:fnkconnection:${window.formPath}:default:Name:${name}`;
+  } else {
+    return `urn:fnkconnection:${window.formPath}:default`;
+  }
+}
+
 export default async function decorate(block) {
+  block.setAttribute('itemtype', 'urn:fnk:type/form');
   const anchor = block.querySelector('a');
   const url = anchor.href;
   const isForm = /\.json(?:\?sheet=.+)?$/.test(url);
   if (isForm) {
+    const { pathname, search } = new URL(url);
+    window.formPath = pathname;
     const config = readBlockConfig(block);
+    block.setAttribute('itemid', generateItemId());
     block.replaceChildren(await createForm(url, config));
   }
 }
