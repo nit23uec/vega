@@ -86,8 +86,10 @@ function createLabel(fd, tagName = 'label') {
   }
   label.className = 'field-label';
   label.innerHTML = sanitizeHTML(fd.Label) || '';
-  label.setAttribute('itemprop', 'Label');
-  label.setAttribute('itemtype', 'text');
+  if (tagName !== 'legend') {
+    label.setAttribute('itemprop', 'Label');
+    label.setAttribute('itemtype', 'text');
+  }
   if (fd.Tooltip) {
     label.title = fd.Tooltip;
   }
