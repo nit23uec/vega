@@ -1,6 +1,6 @@
 import {
   readBlockConfig,
-} from '../../scripts/lib-franklin';
+} from '../../scripts/lib-franklin.js';
 
 function stripTags(input, allowd) {
   const allowed = ((`${allowd || ''}`)
