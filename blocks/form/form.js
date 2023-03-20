@@ -86,7 +86,7 @@ function createLabel(fd, tagName = 'label') {
   }
   label.className = 'field-label';
   label.innerHTML = sanitizeHTML(fd.Label) || '';
-  if (tagName !== 'legend') {
+  if (fd.Type !== 'radio') {
     label.setAttribute('itemprop', 'Label');
     label.setAttribute('itemtype', 'text');
   }
@@ -111,9 +111,11 @@ export function createHelpText(fd) {
 
 function createFieldWrapper(fd, tagName = 'div') {
   const fieldWrapper = document.createElement(tagName);
-  fieldWrapper.setAttribute('itemtype', 'urn:fnk:type/component');
-  fieldWrapper.setAttribute('itemid', generateItemId(fd.Name));
-  fieldWrapper.setAttribute('itemscope', '');
+  if (fd.Type !== 'radio') {
+    fieldWrapper.setAttribute('itemtype', 'urn:fnk:type/component');
+    fieldWrapper.setAttribute('itemid', generateItemId(fd.Name));
+    fieldWrapper.setAttribute('itemscope', '');
+  }
   const nameStyle = fd.Name ? ` form-${fd.Name}` : '';
   const fieldId = `form-${fd.Type}-wrapper${nameStyle}`;
   fieldWrapper.className = fieldId;
