@@ -1,5 +1,5 @@
 import {
-  readBlockConfig,
+  readBlockConfig, sampleRUM,
 } from '../../scripts/lib-franklin.js';
 
 function stripTags(input, allowd) {
@@ -50,6 +50,7 @@ async function submitForm(form) {
     body: JSON.stringify({ data: payload }),
   });
   await resp.text();
+  sampleRUM('form:submit');
   return payload;
 }
 
