@@ -87,10 +87,11 @@ function createLabel(fd, tagName = 'label') {
   }
   label.className = 'field-label';
   label.innerHTML = sanitizeHTML(fd.Label) || '';
+  /*
   if (fd.Type !== 'radio') {
     label.setAttribute('itemprop', 'Label');
     label.setAttribute('itemtype', 'text');
-  }
+  }*/
   if (fd.Tooltip) {
     label.title = fd.Tooltip;
   }
@@ -105,8 +106,10 @@ export function createHelpText(fd) {
   const div = document.createElement('div');
   div.className = 'field-description';
   div.setAttribute('aria-live', 'polite');
+  /*
   div.setAttribute('itemtype', 'text');
   div.setAttribute('itemprop', 'Description');
+  */
   div.innerText = fd.Description;
   div.id = `${fd.Id}-description`;
   return div;
@@ -114,11 +117,12 @@ export function createHelpText(fd) {
 
 function createFieldWrapper(fd, tagName = 'div') {
   const fieldWrapper = document.createElement(tagName);
+  /*
   if (fd.Type !== 'radio') {
     fieldWrapper.setAttribute('itemtype', 'urn:fnk:type/component');
     fieldWrapper.setAttribute('itemid', generateItemId(fd.Name));
     fieldWrapper.setAttribute('itemscope', '');
-  }
+  }*/
   const nameStyle = fd.Name ? ` form-${fd.Name}` : '';
   const fieldId = `form-${fd.Type}-wrapper${nameStyle}`;
   fieldWrapper.className = fieldId;
@@ -342,6 +346,7 @@ async function createForm(formURL, config) {
   const data = mergeFormWithFragments(formData, fragmentsData);
   const form = document.createElement('form');
   const id = config?.id?.trim();
+  form.name = generateItemId();
   form.id = id;
   const fields = data
     .map((fd) => ({ fd, el: renderField(fd) }));
@@ -394,7 +399,7 @@ function generateItemId(name) {
 }
 
 export default async function decorate(block) {
-  block.setAttribute('itemtype', 'urn:fnk:type/form');
+  //block.setAttribute('itemtype', 'urn:fnk:type/form');
   const anchor = block.querySelector('a');
   const url = anchor.href;
   const isForm = /\.json(?:\?sheet=.+)?$/.test(url);
@@ -402,7 +407,7 @@ export default async function decorate(block) {
     const { pathname, search } = new URL(url);
     window.formPath = pathname;
     const config = readBlockConfig(block);
-    block.setAttribute('itemid', generateItemId());
+    //block.setAttribute('itemid', generateItemId());
     block.replaceChildren(await createForm(url, config));
   }
 }
