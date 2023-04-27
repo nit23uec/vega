@@ -282,7 +282,7 @@ function generateItemId(name) {
 
 export default async function decorate(block) {
   const formLink = block.querySelector('a[href$=".json"]');
-  if (formLink && !formLink.href.contains('nedbank')) {
+  if (formLink && !formLink.href.includes('nedbank')) {
     const form = await createForm(formLink.href);
     formLink.replaceWith(form);
   }
