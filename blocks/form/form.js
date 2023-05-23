@@ -56,6 +56,10 @@ function createLabel(fd, tagName = 'label') {
   label.setAttribute('for', fd.Id);
   label.className = 'field-label';
   label.textContent = fd.Label || '';
+  if (fd.Type !== 'radio') {
+    label.setAttribute('itemprop', 'Label');
+    label.setAttribute('itemtype', 'richtext');
+  }
   if (fd.Tooltip) {
     label.title = fd.Tooltip;
   }
@@ -66,6 +70,8 @@ function createHelpText(fd) {
   const div = document.createElement('div');
   div.className = 'field-description';
   div.setAttribute('aria-live', 'polite');
+  div.setAttribute('itemtype', 'text');
+  div.setAttribute('itemprop', 'Description');
   div.innerText = fd.Description;
   div.id = `${fd.Id}-description`;
   return div;
@@ -73,6 +79,11 @@ function createHelpText(fd) {
 
 function createFieldWrapper(fd, tagName = 'div') {
   const fieldWrapper = document.createElement(tagName);
+  if (fd.Type !== 'radio') {
+    fieldWrapper.setAttribute('itemtype', 'urn:fnk:type/component');
+    fieldWrapper.setAttribute('itemid', generateItemId(fd.Name));
+    fieldWrapper.setAttribute('itemscope', '');
+  }
   const nameStyle = fd.Name ? ` form-${fd.Name}` : '';
   const fieldId = `form-${fd.Type}-wrapper${nameStyle}`;
   fieldWrapper.className = fieldId;
@@ -281,8 +292,10 @@ function generateItemId(name) {
 }
 
 export default async function decorate(block) {
+  block.setAttribute('itemtype', 'urn:fnk:type/form');
   const formLink = block.querySelector('a[href$=".json"]');
   if (formLink && !formLink.href.includes('nedbank')) {
+    block.setAttribute('itemid', generateItemId());
     const form = await createForm(formLink.href);
     formLink.replaceWith(form);
   }
